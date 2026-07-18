@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { uploadImageToImgBB } from "@/lib/imgbb";
 import { UploadCloud, Loader2 } from "lucide-react";
 

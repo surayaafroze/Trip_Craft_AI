@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { useReviews, useCreateReview } from "@/hooks/useItems";
 import { useSession } from "@/lib/auth-client";
 import { Star, Loader2, UserCircle } from "lucide-react";
