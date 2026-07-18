@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { uploadImageToImgBB } from "@/lib/imgbb";
-import { UploadCloud, X, Loader2 } from "lucide-react";
+import { UploadCloud, Loader2 } from "lucide-react";
 
 interface ImageUploaderProps {
   onImageUploaded: (url: string) => void;
@@ -26,6 +26,7 @@ export default function ImageUploader({ onImageUploaded }: ImageUploaderProps) {
       const url = await uploadImageToImgBB(file);
       onImageUploaded(url);
     } catch (err) {
+      console.error(err);
       setError("Failed to upload image. Please try again.");
     } finally {
       setIsUploading(false);

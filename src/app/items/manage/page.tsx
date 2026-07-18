@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useMyItems, useDeleteItem } from "@/hooks/useItems";
 import Link from "next/link";
-import { Trash2, Edit2, ExternalLink, Loader2, AlertTriangle, MapPin } from "lucide-react";
+import { Trash2, ExternalLink, Loader2, AlertTriangle, MapPin } from "lucide-react";
 
 export default function ManageItemsPage() {
   const { data: items, isLoading, isError } = useMyItems();
@@ -23,7 +23,7 @@ export default function ManageItemsPage() {
         <div className="flex justify-between items-end mb-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Destinations</h1>
-            <p className="text-gray-600">View and manage destinations you've contributed.</p>
+            <p className="text-gray-600">View and manage destinations you&apos;ve contributed.</p>
           </div>
           <Link href="/items/add" className="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 font-medium">
             Add New
@@ -46,7 +46,7 @@ export default function ManageItemsPage() {
               <MapPin size={24} className="text-gray-400" />
             </div>
             <h3 className="text-xl font-bold text-gray-900 mb-2">No destinations yet</h3>
-            <p className="text-gray-500 mb-6">You haven't contributed any destinations to the platform.</p>
+            <p className="text-gray-500 mb-6">You haven&apos;t contributed any destinations to the platform.</p>
             <Link href="/items/add" className="text-blue-600 font-medium hover:underline">
               Create your first destination &rarr;
             </Link>
@@ -65,24 +65,25 @@ export default function ManageItemsPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y">
-                  {items?.map((item: any) => (
+                  {items?.map((item: Record<string, unknown>) => (
                     <tr key={item._id} className="hover:bg-gray-50 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
-                          <img src={item.images[0]} alt={item.title} className="w-12 h-12 rounded-md object-cover bg-gray-100" />
-                          <div className="font-medium text-gray-900">{item.title}</div>
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={(item.images as string[])[0]} alt={item.title as string} className="w-12 h-12 rounded-md object-cover bg-gray-100" />
+                          <div className="font-medium text-gray-900">{item.title as string}</div>
                         </div>
                       </td>
-                      <td className="p-4 text-gray-600 text-sm">{item.region}</td>
-                      <td className="p-4 text-gray-600 text-sm">{new Date(item.createdAt).toLocaleDateString()}</td>
-                      <td className="p-4 text-gray-600 text-sm">${item.estimatedCostPerDay}/day</td>
+                      <td className="p-4 text-gray-600 text-sm">{item.region as string}</td>
+                      <td className="p-4 text-gray-600 text-sm">{new Date(item.createdAt as string).toLocaleDateString()}</td>
+                      <td className="p-4 text-gray-600 text-sm">${item.estimatedCostPerDay as number}/day</td>
                       <td className="p-4">
                         <div className="flex items-center justify-end gap-2">
                           <Link href={`/items/${item._id}`} className="p-2 text-gray-400 hover:text-blue-600 transition-colors" title="View">
                             <ExternalLink size={18} />
                           </Link>
                           <button 
-                            onClick={() => setDeleteId(item._id)}
+                            onClick={() => setDeleteId(item._id as string)}
                             className="p-2 text-gray-400 hover:text-red-600 transition-colors" 
                             title="Delete"
                           >

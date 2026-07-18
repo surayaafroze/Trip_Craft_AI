@@ -17,6 +17,7 @@ export default function ItemCard({ item }: ItemCardProps) {
   return (
     <Link href={`/items/${item._id}`} className="group flex flex-col bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <div className="relative h-48 bg-gray-200 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
           src={item.images[0] || "https://placehold.co/600x400?text=No+Image"} 
           alt={item.title} 

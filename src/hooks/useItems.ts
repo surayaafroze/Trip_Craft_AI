@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchApi } from "@/lib/api";
 
 // Item Hooks
-export const useItems = (params: any) => {
+export const useItems = (params: Record<string, unknown>) => {
   return useQuery({
     queryKey: ["items", params],
     queryFn: async () => {
@@ -41,7 +41,7 @@ export const useMyItems = () => {
 export const useCreateItem = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) => fetchApi("/api/items", {
+    mutationFn: (data: Record<string, unknown>) => fetchApi("/api/items", {
       method: "POST",
       body: JSON.stringify(data)
     }),
@@ -77,7 +77,7 @@ export const useReviews = (destinationId: string) => {
 export const useCreateReview = (destinationId: string) => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (data: any) => fetchApi(`/api/items/${destinationId}/reviews`, {
+    mutationFn: (data: Record<string, unknown>) => fetchApi(`/api/items/${destinationId}/reviews`, {
       method: "POST",
       body: JSON.stringify(data)
     }),

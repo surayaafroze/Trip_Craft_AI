@@ -99,15 +99,15 @@ export default function ReviewSection({ destinationId }: { destinationId: string
           <p className="text-gray-500 italic">No reviews yet. Be the first to review this destination!</p>
         ) : (
           <div className="grid gap-4">
-            {reviews?.map((review: any) => (
-              <div key={review._id} className="bg-white p-5 rounded-xl border shadow-sm">
+            {reviews?.map((review: Record<string, unknown>) => (
+              <div key={review._id as string} className="bg-white p-5 rounded-xl border shadow-sm">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
                     <UserCircle className="text-gray-400" size={32} />
                     <div>
-                      <div className="font-bold text-gray-900 text-sm">{review.userName}</div>
+                      <div className="font-bold text-gray-900 text-sm">{review.userName as string}</div>
                       <div className="text-xs text-gray-500">
-                        {new Date(review.createdAt).toLocaleDateString()}
+                        {new Date(review.createdAt as string).toLocaleDateString()}
                       </div>
                     </div>
                   </div>
@@ -116,12 +116,12 @@ export default function ReviewSection({ destinationId }: { destinationId: string
                       <Star
                         key={star}
                         size={14}
-                        className={star <= review.rating ? "text-yellow-400 fill-current" : "text-gray-200"}
+                        className={star <= (review.rating as number) ? "text-yellow-400 fill-current" : "text-gray-200"}
                       />
                     ))}
                   </div>
                 </div>
-                <p className="text-gray-700 text-sm leading-relaxed">{review.comment}</p>
+                <p className="text-gray-700 text-sm leading-relaxed">{review.comment as string}</p>
               </div>
             ))}
           </div>

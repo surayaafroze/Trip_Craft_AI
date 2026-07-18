@@ -48,7 +48,7 @@ export default function AddItemPage() {
     createItem.mutate(
       { ...data, images },
       {
-        onSuccess: (newItem: any) => {
+        onSuccess: (newItem: Record<string, unknown>) => {
           router.push(`/items/${newItem._id}`);
         },
         onError: () => {
@@ -156,6 +156,7 @@ export default function AddItemPage() {
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   {images.map((url, i) => (
                     <div key={i} className="relative aspect-video rounded-lg overflow-hidden border">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={url} alt={`Upload ${i + 1}`} className="w-full h-full object-cover" />
                       <button
                         type="button"

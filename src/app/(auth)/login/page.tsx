@@ -42,6 +42,7 @@ export default function LoginPage() {
       
       router.push("/dashboard");
     } catch (err) {
+      console.error(err);
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -65,6 +66,7 @@ export default function LoginPage() {
       
       router.push("/dashboard");
     } catch (err) {
+      console.error(err);
       setError("An unexpected error occurred");
     } finally {
       setIsLoading(false);
@@ -80,6 +82,7 @@ export default function LoginPage() {
         callbackURL: "/dashboard"
       });
     } catch (err) {
+      console.error(err);
       setError("An unexpected error occurred with Google Login");
       setIsGoogleLoading(false);
     }
@@ -163,7 +166,7 @@ export default function LoginPage() {
         </div>
 
         <div className="mt-6 text-center text-sm text-gray-600">
-          Don't have an account?{" "}
+          Don&apos;t have an account?{" "}
           <Link href="/register" className="text-blue-600 hover:underline font-medium">
             Sign up
           </Link>

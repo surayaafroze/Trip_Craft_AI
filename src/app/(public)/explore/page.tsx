@@ -53,8 +53,8 @@ export default function ExplorePage() {
         ) : (
           <>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {data?.items.map((item: any) => (
-                <ItemCard key={item._id} item={item} />
+              {data?.items.map((item: Record<string, unknown>) => (
+                <ItemCard key={item._id as string} item={item as unknown as { _id: string; title: string; region: string; images: string[]; averageRating: number; estimatedCostPerDay: number; category: string; }} />
               ))}
             </div>
             

@@ -49,14 +49,21 @@ export default function ItemDetailsPage() {
         {/* Image Gallery */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-12 h-[60vh]">
           <div className="h-full rounded-2xl overflow-hidden">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={item.images[0]} alt={item.title} className="w-full h-full object-cover" />
           </div>
           <div className="grid grid-rows-2 gap-4 h-full">
             {item.images[1] ? (
-              <img src={item.images[1]} alt={item.title} className="w-full h-full object-cover rounded-2xl" />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.images[1]} alt={item.title} className="w-full h-full object-cover rounded-2xl" />
+              </>
             ) : <div className="bg-gray-100 rounded-2xl h-full" />}
             {item.images[2] ? (
-              <img src={item.images[2]} alt={item.title} className="w-full h-full object-cover rounded-2xl" />
+              <>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.images[2]} alt={item.title} className="w-full h-full object-cover rounded-2xl" />
+              </>
             ) : <div className="bg-gray-100 rounded-2xl h-full" />}
           </div>
         </div>
@@ -116,8 +123,8 @@ export default function ItemDetailsPage() {
           <section className="mt-20 border-t pt-16">
             <h2 className="text-2xl font-bold mb-8">Similar Destinations</h2>
             <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {relatedItems.map((relatedItem: any) => (
-                <ItemCard key={relatedItem._id} item={relatedItem} />
+              {relatedItems.map((relatedItem: Record<string, unknown>) => (
+                <ItemCard key={relatedItem._id as string} item={relatedItem as unknown as { _id: string; title: string; region: string; images: string[]; averageRating: number; estimatedCostPerDay: number; category: string; }} />
               ))}
             </div>
           </section>

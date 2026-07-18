@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight, MapPin, Compass, DollarSign, BrainCircuit, MessageSquare, Star } from "lucide-react";
+import { ArrowRight, MapPin, Compass, DollarSign, BrainCircuit, Star } from "lucide-react";
 
 export default function HomePage() {
   return (
@@ -98,7 +98,6 @@ export default function HomePage() {
             </Link>
           </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {/* Skeletons for Trending Destinations */}
             {[1, 2, 3, 4].map((i) => (
               <div key={i} className="border rounded-xl overflow-hidden shadow-sm flex flex-col">
                 <div className="h-48 bg-gray-200 animate-pulse" />
@@ -158,7 +157,7 @@ export default function HomePage() {
                   <Star fill="currentColor" size={20} />
                   <Star fill="currentColor" size={20} />
                 </div>
-                <p className="text-gray-700 mb-6 font-medium">"{t.text}"</p>
+                <p className="text-gray-700 italic mb-4">&quot;{t.text}&quot;</p>
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center font-bold">
                     {t.name.charAt(0)}

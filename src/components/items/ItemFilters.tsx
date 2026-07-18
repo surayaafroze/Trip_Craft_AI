@@ -8,13 +8,13 @@ interface ItemFiltersProps {
     maxPrice: string;
     sort: string;
   };
-  setFilters: (filters: any) => void;
+  setFilters: (filters: Record<string, unknown>) => void;
 }
 
 export default function ItemFilters({ filters, setFilters }: ItemFiltersProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters((prev: any) => ({ ...prev, [name]: value }));
+    setFilters((prev: Record<string, unknown>) => ({ ...prev, [name]: value }));
   };
 
   return (
