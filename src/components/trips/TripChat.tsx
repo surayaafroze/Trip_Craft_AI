@@ -26,14 +26,9 @@ export default function TripChat({ tripId }: TripChatProps) {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"}/api/agent/chat/${tripId}/history`, {
-          // Add auth headers if needed, but fetch might need withCredentials or explicit JWT
-          // For Better Auth in client side, cookies are sent automatically if configured, or we can use the fetch wrapper.
-        });
-        
         // Using our API client to ensure auth headers are included
         const { fetchApi } = await import("@/lib/api");
-        const historyRes = await fetchApi(`/agent/chat/${tripId}/history`);
+        const historyRes = await fetchApi(`/api/agent/chat/${tripId}/history`);
         
         const formattedHistory = historyRes
           .filter((m: Record<string, unknown>) => m.role === "user" || m.role === "assistant")
