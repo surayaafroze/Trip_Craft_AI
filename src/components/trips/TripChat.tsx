@@ -143,37 +143,45 @@ export default function TripChat({ tripId }: TripChatProps) {
   ];
 
   return (
-    <div className="flex flex-col h-[600px] bg-white border rounded-xl shadow-sm overflow-hidden">
-      <div className="p-4 border-b bg-gray-50 flex items-center gap-2">
-        <BrainCircuit className="text-purple-600" />
-        <h3 className="font-bold text-gray-900">Trip Agent AI</h3>
+    <div className="flex flex-col h-[650px] bg-white rounded-3xl premium-shadow border border-gray-100 overflow-hidden relative">
+      <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-ocean-400 via-purple-500 to-orange-400" />
+      <div className="p-5 border-b border-gray-100 bg-white/50 backdrop-blur-md flex items-center gap-3">
+        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-100 to-purple-50 flex items-center justify-center shadow-sm">
+          <BrainCircuit className="text-purple-600" size={20} />
+        </div>
+        <div>
+          <h3 className="font-bold text-foreground tracking-tight">Trip Agent AI</h3>
+          <p className="text-xs text-gray-400 font-medium">Always online</p>
+        </div>
       </div>
       
-      <div className="flex-grow overflow-y-auto p-4 space-y-4">
+      <div className="flex-grow overflow-y-auto p-6 space-y-6 bg-gray-50/30">
         {messages.length === 0 && !isLoading && (
           <div className="h-full flex flex-col items-center justify-center text-gray-500">
-            <Bot size={48} className="mb-4 text-gray-300" />
-            <p>Hi! I am your AI travel agent.</p>
-            <p className="text-sm">Ask me to add destinations or update your itinerary.</p>
+            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-sm mb-6 text-gray-300">
+              <Bot size={40} />
+            </div>
+            <p className="font-bold text-gray-900 mb-1">Hi! I am your AI travel agent.</p>
+            <p className="text-sm max-w-[200px] text-center leading-relaxed">Ask me to add destinations or update your itinerary.</p>
           </div>
         )}
 
         {messages.map((msg) => (
           <div key={msg.id} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
             {msg.role === "assistant" && (
-              <div className="w-8 h-8 rounded-full bg-purple-100 text-purple-600 flex items-center justify-center flex-shrink-0">
-                <Bot size={16} />
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-100 to-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm border border-purple-100/50 mt-auto">
+                <Bot size={18} />
               </div>
             )}
-            <div className={`max-w-[80%] rounded-2xl px-4 py-2 ${
-              msg.role === "user" ? "bg-blue-600 text-white rounded-br-none" : "bg-gray-100 text-gray-800 rounded-bl-none"
+            <div className={`max-w-[80%] px-5 py-3.5 shadow-sm ${
+              msg.role === "user" ? "bg-gradient-to-r from-ocean-600 to-ocean-700 text-white rounded-2xl rounded-br-sm" : "bg-white text-gray-800 rounded-2xl rounded-bl-sm border border-gray-100"
             }`}>
-              <div className="whitespace-pre-wrap">{msg.content}</div>
-              {msg.isStreaming && <span className="inline-block w-2 h-4 ml-1 bg-purple-500 animate-pulse" />}
+              <div className="whitespace-pre-wrap text-[15px] leading-relaxed">{msg.content}</div>
+              {msg.isStreaming && <span className="inline-block w-2 h-4 ml-1 bg-purple-500 animate-pulse rounded-full" />}
             </div>
             {msg.role === "user" && (
-              <div className="w-8 h-8 rounded-full bg-gray-200 text-gray-500 flex items-center justify-center flex-shrink-0">
-                <User size={16} />
+              <div className="w-10 h-10 rounded-full bg-gray-100 text-gray-500 flex items-center justify-center flex-shrink-0 shadow-sm border border-gray-200 mt-auto">
+                <User size={18} />
               </div>
             )}
           </div>
@@ -189,34 +197,34 @@ export default function TripChat({ tripId }: TripChatProps) {
         <div ref={messagesEndRef} />
       </div>
 
-      <div className="p-4 border-t bg-white">
-        <div className="flex gap-2 mb-3 overflow-x-auto pb-2 scrollbar-hide">
+      <div className="p-5 border-t border-gray-100 bg-white">
+        <div className="flex gap-2 mb-4 overflow-x-auto pb-2 scrollbar-hide">
           {suggestions.map((s, i) => (
             <button 
               key={i}
               onClick={() => handleSubmit(undefined, s)}
               disabled={isLoading}
-              className="whitespace-nowrap px-3 py-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-full transition-colors disabled:opacity-50"
+              className="whitespace-nowrap px-4 py-2 bg-gray-50 border border-gray-100 hover:border-purple-200 hover:bg-purple-50 text-gray-700 text-sm rounded-full transition-all disabled:opacity-50 font-medium"
             >
               {s}
             </button>
           ))}
         </div>
-        <form onSubmit={handleSubmit} className="flex gap-2">
+        <form onSubmit={handleSubmit} className="flex gap-3 relative">
           <input
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             disabled={isLoading}
             placeholder="Ask AI to plan your trip..."
-            className="flex-grow px-4 py-2 border rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500 disabled:bg-gray-50"
+            className="flex-grow pl-6 pr-14 py-4 bg-gray-50 border border-gray-200 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 disabled:bg-gray-100 transition-all font-medium text-[15px]"
           />
           <button
             type="submit"
             disabled={!input.trim() || isLoading}
-            className="w-10 h-10 bg-purple-600 text-white rounded-full flex items-center justify-center hover:bg-purple-700 disabled:opacity-50 transition-colors"
+            className="absolute right-2 top-2 bottom-2 aspect-square bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-full flex items-center justify-center hover:shadow-md disabled:opacity-50 transition-all"
           >
-            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="-ml-0.5" />}
+            {isLoading ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} className="ml-0.5" />}
           </button>
         </form>
       </div>

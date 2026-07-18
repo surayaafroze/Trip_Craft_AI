@@ -3,8 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useTrips, useCreateTrip, useDeleteTrip } from "@/hooks/useTrips";
-import { Loader2, Trash2, MapPin, DollarSign, Calendar, Plus } from "lucide-react";
+import { Loader2, Trash2, MapPin, DollarSign, Calendar, Plus, Compass } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface Trip {
   _id: string;
@@ -45,14 +46,14 @@ export default function TripsPage() {
 
   return (
     <div className="container mx-auto px-4 py-12 max-w-6xl">
-      <div className="flex justify-between items-center mb-8">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">My Trips</h1>
-          <p className="text-gray-600">Plan and manage your AI-assisted journeys.</p>
+          <h1 className="text-4xl font-extrabold text-foreground mb-2 tracking-tight">My Trips</h1>
+          <p className="text-gray-500 text-lg">Plan and manage your AI-assisted journeys.</p>
         </div>
         <button 
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-600 text-white px-5 py-2.5 rounded-md hover:bg-blue-700 transition-colors flex items-center gap-2 font-medium"
+          className="bg-ocean-600 text-white px-6 py-3 rounded-full hover:shadow-lg hover:-translate-y-0.5 transition-all flex items-center gap-2 font-bold self-start md:self-auto"
         >
           <Plus size={18} />
           Create Trip
@@ -60,30 +61,36 @@ export default function TripsPage() {
       </div>
 
       {isLoading ? (
-        <div className="flex justify-center py-20">
-          <Loader2 className="animate-spin text-blue-600 w-10 h-10" />
+        <div className="flex justify-center py-32">
+          <Loader2 className="animate-spin text-ocean-600 w-12 h-12" />
         </div>
       ) : trips?.length === 0 ? (
-        <div className="bg-white border rounded-xl p-12 text-center">
-          <div className="w-16 h-16 bg-blue-50 text-blue-500 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Calendar size={28} />
+        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="bg-white border border-gray-100 rounded-3xl p-16 text-center premium-shadow">
+          <div className="w-20 h-20 bg-ocean-50 text-ocean-500 rounded-full flex items-center justify-center mx-auto mb-6">
+            <Compass size={36} />
           </div>
-          <h3 className="text-xl font-bold mb-2">No trips yet</h3>
-          <p className="text-gray-500 mb-6">Start your first adventure by creating a new trip plan.</p>
+          <h3 className="text-2xl font-bold mb-3 tracking-tight">No trips yet</h3>
+          <p className="text-gray-500 mb-8 max-w-md mx-auto text-lg leading-relaxed">Start your first adventure by creating a new AI-powered trip plan tailored to your budget.</p>
           <button 
             onClick={() => setIsModalOpen(true)}
-            className="text-blue-600 font-medium hover:underline"
+            className="text-ocean-600 font-bold hover:text-ocean-700 transition-colors text-lg"
           >
             Create your first trip &rarr;
           </button>
-        </div>
+        </motion.div>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips?.map((trip: Trip) => (
-            <div key={trip._id} className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col group">
-              <div className="p-5 flex-grow">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-xl font-bold text-gray-900 line-clamp-1">{trip.title}</h3>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {trips?.map((trip: Trip, index: number) => (
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }} 
+              animate={{ opacity: 1, y: 0 }} 
+              transition={{ delay: index * 0.05 }}
+              key={trip._id} 
+              className="bg-white border border-gray-100 rounded-3xl overflow-hidden premium-shadow hover:premium-shadow-hover hover:-translate-y-1 transition-all flex flex-col group relative"
+            >
+              <div className="p-8 flex-grow">
+                <div className="flex justify-between items-start mb-4">
+                  <h3 className="text-2xl font-bold text-foreground line-clamp-1 tracking-tight group-hover:text-ocean-600 transition-colors pr-8">{trip.title}</h3>
                   <button 
                     onClick={(e) => {
                       e.preventDefault();
@@ -92,90 +99,112 @@ export default function TripsPage() {
                       }
                     }}
                     disabled={deleteTrip.isPending}
-                    className="text-gray-400 hover:text-red-500 p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                    className="absolute top-8 right-8 text-gray-300 hover:text-red-500 hover:bg-red-50 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all transform scale-90 group-hover:scale-100"
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={18} />
                   </button>
                 </div>
-                <div className="flex items-center text-gray-500 text-sm mb-4">
-                  <MapPin size={14} className="mr-1" />
+                
+                <div className="flex items-center text-teal-600 font-semibold text-sm mb-6 bg-teal-50 w-fit px-3 py-1 rounded-full">
+                  <MapPin size={14} className="mr-1.5" />
                   {trip.region}
                 </div>
-                <div className="flex items-center justify-between text-sm">
-                  <span className="text-gray-500">Budget Target:</span>
-                  <span className="font-semibold flex items-center"><DollarSign size={14}/>{trip.budgetTarget}</span>
-                </div>
-                <div className="flex items-center justify-between text-sm mt-2">
-                  <span className="text-gray-500">Est. Total Cost:</span>
-                  <span className={`font-semibold flex items-center ${trip.estimatedTotalCost > trip.budgetTarget ? 'text-red-600' : 'text-green-600'}`}>
-                    <DollarSign size={14}/>{trip.estimatedTotalCost || 0}
-                  </span>
+                
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500 font-medium">Budget Target:</span>
+                    <span className="font-bold flex items-center text-foreground"><DollarSign size={14} className="text-gray-400"/>{trip.budgetTarget}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-gray-500 font-medium">Est. Total Cost:</span>
+                    <span className={`font-bold flex items-center ${trip.estimatedTotalCost > trip.budgetTarget ? 'text-red-500' : 'text-green-500'}`}>
+                      <DollarSign size={14} className={trip.estimatedTotalCost > trip.budgetTarget ? 'text-red-300' : 'text-green-300'}/>{trip.estimatedTotalCost || 0}
+                    </span>
+                  </div>
                 </div>
               </div>
-              <div className="border-t p-4 bg-gray-50 flex justify-between items-center">
-                <span className="text-xs text-gray-500">{new Date(trip.createdAt).toLocaleDateString()}</span>
-                <Link href={`/dashboard/trips/${trip._id}`} className="text-blue-600 font-medium text-sm hover:underline">
+              <div className="border-t border-gray-50 p-5 bg-gray-50/50 flex justify-between items-center group-hover:bg-ocean-50/30 transition-colors">
+                <span className="text-xs text-gray-400 font-medium uppercase tracking-wider flex items-center gap-1.5">
+                  <Calendar size={12} /> {new Date(trip.createdAt).toLocaleDateString()}
+                </span>
+                <Link href={`/dashboard/trips/${trip._id}`} className="text-ocean-600 font-bold text-sm hover:text-ocean-700 transition-colors">
                   Open Plan &rarr;
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
         </div>
       )}
 
       {/* Create Trip Modal */}
-      {isModalOpen && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-xl max-w-md w-full p-6 shadow-xl">
-            <h2 className="text-2xl font-bold mb-4">Create New Trip</h2>
-            <form onSubmit={handleCreate} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Trip Title</label>
-                <input 
-                  type="text" 
-                  value={formData.title}
-                  onChange={e => setFormData({...formData, title: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-                  placeholder="e.g. Summer in Paris"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Region</label>
-                <select 
-                  value={formData.region}
-                  onChange={e => setFormData({...formData, region: e.target.value})}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-                >
-                  <option value="Europe">Europe</option>
-                  <option value="Asia">Asia</option>
-                  <option value="North America">North America</option>
-                  <option value="South America">South America</option>
-                  <option value="Africa">Africa</option>
-                  <option value="Oceania">Oceania</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Budget Target (USD)</label>
-                <input 
-                  type="number" 
-                  value={formData.budgetTarget}
-                  onChange={e => setFormData({...formData, budgetTarget: Number(e.target.value)})}
-                  className="w-full px-3 py-2 border rounded-md focus:ring-2 focus:ring-blue-500 outline-none"
-                  min="0"
-                />
-              </div>
-              {error && <p className="text-red-500 text-sm">{error}</p>}
-              <div className="flex justify-end gap-3 pt-4">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md">Cancel</button>
-                <button type="submit" disabled={createTrip.isPending} className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 flex items-center gap-2">
-                  {createTrip.isPending && <Loader2 size={16} className="animate-spin" />}
-                  Create
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-ocean-950/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+          >
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-3xl max-w-md w-full p-8 shadow-2xl border border-gray-100"
+            >
+              <h2 className="text-3xl font-extrabold mb-2 tracking-tight">Create New Trip</h2>
+              <p className="text-gray-500 mb-8">Start planning your next amazing journey.</p>
+              
+              <form onSubmit={handleCreate} className="space-y-5">
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Trip Title</label>
+                  <input 
+                    type="text" 
+                    value={formData.title}
+                    onChange={e => setFormData({...formData, title: e.target.value})}
+                    className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ocean-500/20 focus:border-ocean-500 transition-all font-medium placeholder:text-gray-400"
+                    placeholder="e.g. Summer in Paris"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Region</label>
+                  <select 
+                    value={formData.region}
+                    onChange={e => setFormData({...formData, region: e.target.value})}
+                    className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ocean-500/20 focus:border-ocean-500 transition-all font-medium appearance-none"
+                    style={{ backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%239CA3AF'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E")`, backgroundRepeat: 'no-repeat', backgroundPosition: 'right 1.25rem center', backgroundSize: '1.25rem' }}
+                  >
+                    <option value="Europe">Europe</option>
+                    <option value="Asia">Asia</option>
+                    <option value="North America">North America</option>
+                    <option value="South America">South America</option>
+                    <option value="Africa">Africa</option>
+                    <option value="Oceania">Oceania</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-bold text-gray-700 mb-2 uppercase tracking-wider">Budget Target (USD)</label>
+                  <input 
+                    type="number" 
+                    value={formData.budgetTarget}
+                    onChange={e => setFormData({...formData, budgetTarget: Number(e.target.value)})}
+                    className="w-full px-5 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-ocean-500/20 focus:border-ocean-500 transition-all font-medium"
+                    min="0"
+                  />
+                </div>
+                {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
+                
+                <div className="flex justify-end gap-3 pt-6 mt-6 border-t border-gray-100">
+                  <button type="button" onClick={() => setIsModalOpen(false)} className="px-6 py-3 font-semibold text-gray-500 hover:text-gray-700 hover:bg-gray-50 rounded-xl transition-colors">Cancel</button>
+                  <button type="submit" disabled={createTrip.isPending} className="px-6 py-3 bg-gradient-to-r from-ocean-600 to-ocean-800 text-white rounded-xl hover:shadow-lg font-bold disabled:opacity-70 flex items-center gap-2 transition-all">
+                    {createTrip.isPending && <Loader2 size={16} className="animate-spin" />}
+                    Create Plan
+                  </button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

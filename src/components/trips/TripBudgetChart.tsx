@@ -15,8 +15,9 @@ interface TripBudgetChartProps {
 export default function TripBudgetChart({ itinerary, budgetTarget }: TripBudgetChartProps) {
   if (!itinerary || itinerary.length === 0) {
     return (
-      <div className="h-64 flex items-center justify-center bg-gray-50 border rounded-xl text-gray-500">
-        No itinerary data available for chart.
+      <div className="h-64 flex flex-col items-center justify-center bg-gray-50/50 border-2 border-dashed border-gray-200 rounded-3xl text-gray-500 font-medium">
+        <p>No budget data available.</p>
+        <p className="text-sm font-normal mt-1 text-gray-400">Add activities to see the breakdown.</p>
       </div>
     );
   }
@@ -32,20 +33,24 @@ export default function TripBudgetChart({ itinerary, budgetTarget }: TripBudgetC
   const dailyBudgetTarget = budgetTarget / (itinerary.length || 1);
 
   return (
-    <div className="h-80 w-full bg-white p-4 border rounded-xl shadow-sm">
-      <h3 className="text-lg font-bold mb-4 text-center">Budget Breakdown per Day</h3>
+    <div className="h-[400px] w-full bg-white p-8 border border-gray-100 rounded-3xl premium-shadow">
+      <h3 className="text-xl font-bold mb-6 text-foreground tracking-tight">Daily Budget Breakdown</h3>
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
           data={data}
-          margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+          margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
         >
-          <CartesianGrid strokeDasharray="3 3" vertical={false} />
-          <XAxis dataKey="name" />
-          <YAxis />
-          <Tooltip cursor={{ fill: 'transparent' }} formatter={(value) => `$${value}`} />
-          <Legend />
-          <ReferenceLine y={dailyBudgetTarget} label="Daily Budget Avg" stroke="red" strokeDasharray="3 3" />
-          <Bar dataKey="cost" name="Estimated Cost" fill="#2563eb" radius={[4, 4, 0, 0]} />
+          <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#E5E7EB" />
+          <XAxis dataKey="name" tick={{fill: '#6B7280', fontWeight: 500}} axisLine={false} tickLine={false} dy={10} />
+          <YAxis tick={{fill: '#6B7280', fontWeight: 500}} axisLine={false} tickLine={false} tickFormatter={(value) => `$${value}`} dx={-10} />
+          <Tooltip 
+            cursor={{ fill: 'transparent' }} 
+            formatter={(value: any) => [`$${value}`, "Estimated Cost"]}
+            contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} 
+          />
+          <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 500, color: '#4B5563' }} />
+          <ReferenceLine y={dailyBudgetTarget} label={{ position: 'top', value: 'Avg Budget', fill: '#ef4444', fontWeight: 'bold', fontSize: 12 }} stroke="#ef4444" strokeDasharray="3 3" />
+          <Bar dataKey="cost" name="Estimated Cost" fill="#0891b2" radius={[6, 6, 0, 0]} barSize={40} />
         </BarChart>
       </ResponsiveContainer>
     </div>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Star, DollarSign } from "lucide-react";
+import { MapPin, Star, DollarSign, ArrowRight } from "lucide-react";
 
 interface ItemCardProps {
   item: {
@@ -7,50 +7,53 @@ interface ItemCardProps {
     title: string;
     region: string;
     images: string[];
-    averageRating: number;
-    estimatedCostPerDay: number;
+    avgRating: number;
+    avgDailyCost: number;
     category: string;
   };
 }
 
 export default function ItemCard({ item }: ItemCardProps) {
   return (
-    <Link href={`/items/${item._id}`} className="group flex flex-col bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-      <div className="relative h-48 bg-gray-200 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
+    <Link href={`/items/${item._id}`} className="group flex flex-col bg-white rounded-3xl overflow-hidden premium-shadow hover:premium-shadow-hover transition-all duration-300 hover:-translate-y-1">
+      <div className="relative h-64 bg-gray-100 overflow-hidden">
         <img 
-          src={item.images[0] || "https://placehold.co/600x400?text=No+Image"} 
+          src={item.images?.[0] || "https://placehold.co/600x400?text=No+Image"} 
           alt={item.title} 
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
-        <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-md text-xs font-bold flex items-center gap-1 shadow-sm">
-          <Star size={14} className="text-yellow-500 fill-current" />
-          {item.averageRating ? item.averageRating.toFixed(1) : "New"}
+        <div className="absolute inset-0 bg-gradient-to-t from-ocean-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
+        <div className="absolute top-4 right-4 glass px-3 py-1.5 rounded-full text-sm font-bold flex items-center gap-1.5 text-gray-900 shadow-lg">
+          <Star size={14} className="text-orange-500 fill-current" />
+          {item.avgRating ? item.avgRating.toFixed(1) : "New"}
         </div>
-        <div className="absolute top-3 left-3 bg-blue-600 text-white px-2 py-1 rounded-md text-xs font-bold shadow-sm">
+        <div className="absolute top-4 left-4 bg-ocean-900/80 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider shadow-lg">
           {item.category}
         </div>
       </div>
       
-      <div className="p-4 flex flex-col flex-grow">
-        <div className="flex items-start justify-between gap-2 mb-2">
-          <h3 className="font-bold text-lg text-gray-900 line-clamp-1">{item.title}</h3>
+      <div className="p-6 flex flex-col flex-grow">
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <h3 className="font-bold text-xl text-foreground line-clamp-1 tracking-tight group-hover:text-ocean-600 transition-colors">{item.title}</h3>
         </div>
         
-        <div className="flex items-center text-gray-500 text-sm mb-4">
-          <MapPin size={14} className="mr-1" />
+        <div className="flex items-center text-gray-500 text-sm mb-6 font-medium">
+          <MapPin size={16} className="mr-1.5 text-teal-600" />
           {item.region}
         </div>
         
-        <div className="mt-auto pt-4 border-t flex justify-between items-center">
+        <div className="mt-auto pt-4 border-t border-gray-100 flex justify-between items-end">
           <div className="flex flex-col">
-            <span className="text-xs text-gray-500">Est. cost</span>
-            <span className="font-bold text-gray-900 flex items-center">
-              <DollarSign size={14} />
-              {item.estimatedCostPerDay}/day
+            <span className="text-xs text-gray-400 font-medium mb-1 uppercase tracking-wider">Est. cost</span>
+            <span className="font-bold text-lg text-foreground flex items-center">
+              <DollarSign size={16} className="text-gray-400" />
+              {item.avgDailyCost} <span className="text-sm font-medium text-gray-400 ml-1">/day</span>
             </span>
           </div>
-          <span className="text-blue-600 font-medium text-sm group-hover:underline">View Details</span>
+          <span className="text-ocean-600 font-semibold text-sm flex items-center gap-1 group-hover:translate-x-1 transition-transform">
+            View Details <ArrowRight size={16} />
+          </span>
         </div>
       </div>
     </Link>
