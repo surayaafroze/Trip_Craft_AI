@@ -1,16 +1,16 @@
 "use client";
 
 import Link from "next/link";
-import { useSession, signOut } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { LogOut } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 export default function Navbar() {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const router = useRouter();
 
   const handleLogout = async () => {
-    await signOut();
+    await authClient.signOut();
     router.push("/login");
   };
 

@@ -8,6 +8,17 @@ import { Loader2, MapPin, DollarSign, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+interface Activity {
+  time: string;
+  activity: string;
+  cost: number;
+}
+
+interface ItineraryDay {
+  day: number;
+  activities: Activity[];
+}
+
 export default function TripDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const { data: trip, isLoading, isError } = useTrip(resolvedParams.id);
@@ -59,13 +70,13 @@ export default function TripDetailsPage({ params }: { params: Promise<{ id: stri
                 </div>
               ) : (
                 <div className="space-y-6">
-                  {trip.itinerary.map((day: Record<string, unknown>) => (
+                  {trip.itinerary.map((day: ItineraryDay) => (
                     <div key={day.day} className="border rounded-lg overflow-hidden">
                       <div className="bg-gray-100 px-4 py-3 font-bold text-gray-800 border-b">
                         Day {day.day}
                       </div>
                       <div className="divide-y">
-                        {(day.activities as Record<string, unknown>[]).map((act: Record<string, unknown>, idx: number) => (
+                        {day.activities.map((act: Activity, idx: number) => (
                           <div key={idx} className="p-4 flex gap-4 hover:bg-gray-50 transition-colors">
                             <div className="w-20 font-bold text-blue-600 text-sm">{act.time}</div>
                             <div className="flex-grow text-gray-800">{act.activity}</div>

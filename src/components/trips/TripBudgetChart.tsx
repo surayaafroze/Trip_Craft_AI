@@ -3,8 +3,12 @@
 import React from "react";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from "recharts";
 
+interface Activity {
+  cost: string | number;
+}
+
 interface TripBudgetChartProps {
-  itinerary: Record<string, unknown>[];
+  itinerary: { day: number; activities: Activity[] }[];
   budgetTarget: number;
 }
 
@@ -18,7 +22,7 @@ export default function TripBudgetChart({ itinerary, budgetTarget }: TripBudgetC
   }
 
   const data = itinerary.map(day => {
-    const totalDayCost = (day.activities as Record<string, unknown>[]).reduce((sum: number, act: Record<string, unknown>) => sum + (Number(act.cost) || 0), 0);
+    const totalDayCost = day.activities.reduce((sum: number, act: Activity) => sum + (Number(act.cost) || 0), 0);
     return {
       name: `Day ${day.day}`,
       cost: totalDayCost,

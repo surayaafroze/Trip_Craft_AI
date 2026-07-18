@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signIn } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
@@ -30,7 +30,7 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const { error: signInError } = await signIn.email({
+      const { error: signInError } = await authClient.signIn.email({
         email: data.email,
         password: data.password,
       });
@@ -54,7 +54,7 @@ export default function LoginPage() {
     setError(null);
     try {
       // Assuming demo account exists on the server with these credentials
-      const { error: signInError } = await signIn.email({
+      const { error: signInError } = await authClient.signIn.email({
         email: "demo@tripcraft.ai",
         password: "password123",
       });
@@ -77,7 +77,7 @@ export default function LoginPage() {
     setIsGoogleLoading(true);
     setError(null);
     try {
-      await signIn.social({
+      await authClient.signIn.social({
         provider: "google",
         callbackURL: "/dashboard"
       });

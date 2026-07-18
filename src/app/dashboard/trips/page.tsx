@@ -6,6 +6,15 @@ import { useTrips, useCreateTrip, useDeleteTrip } from "@/hooks/useTrips";
 import { Loader2, Trash2, MapPin, DollarSign, Calendar, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+interface Trip {
+  _id: string;
+  title: string;
+  region: string;
+  budgetTarget: number;
+  estimatedTotalCost: number;
+  createdAt: string;
+}
+
 export default function TripsPage() {
   const { data: trips, isLoading } = useTrips();
   const createTrip = useCreateTrip();
@@ -70,7 +79,7 @@ export default function TripsPage() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {trips?.map((trip: Record<string, unknown>) => (
+          {trips?.map((trip: Trip) => (
             <div key={trip._id} className="bg-white border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow flex flex-col group">
               <div className="p-5 flex-grow">
                 <div className="flex justify-between items-start mb-3">

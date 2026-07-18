@@ -5,6 +5,7 @@ import { useItems } from "@/hooks/useItems";
 import ItemCard from "@/components/items/ItemCard";
 import ItemFilters from "@/components/items/ItemFilters";
 import ItemSkeleton from "@/components/items/ItemSkeleton";
+import RecommendationsSection from "@/components/recommendations/RecommendationsSection";
 
 export default function ExplorePage() {
   const [filters, setFilters] = useState({
@@ -25,6 +26,9 @@ export default function ExplorePage() {
         <p className="text-gray-600 mb-8">Find your next adventure from our curated list.</p>
 
         <ItemFilters filters={filters} setFilters={(action) => { setFilters(action); setPage(1); }} />
+
+        {/* AI Smart Recommendation Engine Section */}
+        <RecommendationsSection filters={filters} />
 
         {isError && (
           <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8">

@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useReviews, useCreateReview } from "@/hooks/useItems";
-import { useSession } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { Star, Loader2, UserCircle } from "lucide-react";
 
 export default function ReviewSection({ destinationId }: { destinationId: string }) {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
   const { data: reviews, isLoading } = useReviews(destinationId);
   const createReview = useCreateReview(destinationId);
   

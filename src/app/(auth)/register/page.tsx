@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { signUp } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2 } from "lucide-react";
@@ -30,7 +30,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const { error: signUpError } = await signUp.email({
+      const { error: signUpError } = await authClient.signUp.email({
         email: data.email,
         password: data.password,
         name: data.name,

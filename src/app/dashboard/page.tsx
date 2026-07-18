@@ -1,11 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useSession } from "@/lib/auth-client";
+import { authClient } from "@/lib/auth-client";
 import { MapPin, PlusCircle } from "lucide-react";
 
 export default function DashboardPage() {
-  const { data: session } = useSession();
+  const { data: session } = authClient.useSession();
 
   return (
     <div className="container mx-auto px-4 py-12">
