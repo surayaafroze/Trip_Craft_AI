@@ -1,20 +1,22 @@
 import { Search } from "lucide-react";
 
+export interface ItemFiltersState {
+  search: string;
+  region: string;
+  minPrice: string;
+  maxPrice: string;
+  sort: string;
+}
+
 interface ItemFiltersProps {
-  filters: {
-    search: string;
-    region: string;
-    minPrice: string;
-    maxPrice: string;
-    sort: string;
-  };
-  setFilters: (filters: Record<string, unknown>) => void;
+  filters: ItemFiltersState;
+  setFilters: React.Dispatch<React.SetStateAction<ItemFiltersState>>;
 }
 
 export default function ItemFilters({ filters, setFilters }: ItemFiltersProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFilters((prev: Record<string, unknown>) => ({ ...prev, [name]: value }));
+    setFilters((prev) => ({ ...prev, [name]: value }));
   };
 
   return (

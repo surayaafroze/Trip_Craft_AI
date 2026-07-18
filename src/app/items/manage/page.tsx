@@ -66,7 +66,7 @@ export default function ManageItemsPage() {
                 </thead>
                 <tbody className="divide-y">
                   {items?.map((item: Record<string, unknown>) => (
-                    <tr key={item._id} className="hover:bg-gray-50 transition-colors">
+                    <tr key={item._id as string} className="hover:bg-gray-50 transition-colors">
                       <td className="p-4">
                         <div className="flex items-center gap-3">
                           {/* eslint-disable-next-line @next/next/no-img-element */}

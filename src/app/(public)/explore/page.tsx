@@ -24,7 +24,7 @@ export default function ExplorePage() {
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Explore Destinations</h1>
         <p className="text-gray-600 mb-8">Find your next adventure from our curated list.</p>
 
-        <ItemFilters filters={filters} setFilters={(f) => { setFilters(f); setPage(1); }} />
+        <ItemFilters filters={filters} setFilters={(action) => { setFilters(action); setPage(1); }} />
 
         {isError && (
           <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-8">

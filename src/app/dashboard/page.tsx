@@ -16,7 +16,7 @@ export default function DashboardPage() {
         <div className="p-6 bg-white border rounded-xl shadow-sm">
           <h2 className="text-xl font-bold mb-2">My Trips</h2>
           <p className="text-gray-500 mb-4">Manage your AI-planned trips.</p>
-          <a href="/dashboard/trips" className="text-blue-600 font-medium hover:underline">View Trips &rarr;</a>
+          <Link href="/dashboard/trips" className="text-blue-600 font-medium hover:underline">View Trips &rarr;</Link>
         </div>
         <Link href="/items/manage" className="block border rounded-xl p-6 hover:shadow-md transition-shadow group bg-white shadow-sm">
           <div className="w-12 h-12 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
