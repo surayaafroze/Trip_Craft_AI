@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
         code,
         client_id: process.env.GOOGLE_CLIENT_ID || "",
         client_secret: process.env.GOOGLE_CLIENT_SECRET || "",
-        redirect_uri: `${process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000"}/api/auth/callback/google`,
+        redirect_uri: `${request.nextUrl.origin}/api/auth/callback/google`,
         grant_type: "authorization_code",
       }),
     });
@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
       path: '/',
       maxAge: 604800,
       sameSite: 'lax',
+      httpOnly: false,
     });
 
     return response;
