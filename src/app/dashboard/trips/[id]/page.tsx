@@ -4,7 +4,7 @@ import React, { use } from "react";
 import { useTrip } from "@/hooks/useTrips";
 import TripBudgetChart from "@/components/trips/TripBudgetChart";
 import TripChat from "@/components/trips/TripChat";
-import { Loader2, MapPin, DollarSign, ArrowLeft, Calendar, Compass } from "lucide-react";
+import { Loader2, MapPin, DollarSign, ArrowLeft, Calendar } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { motion } from "framer-motion";

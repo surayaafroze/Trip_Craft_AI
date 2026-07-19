@@ -45,7 +45,7 @@ export default function TripBudgetChart({ itinerary, budgetTarget }: TripBudgetC
           <YAxis tick={{fill: '#6B7280', fontWeight: 500}} axisLine={false} tickLine={false} tickFormatter={(value) => `$${value}`} dx={-10} />
           <Tooltip 
             cursor={{ fill: 'transparent' }} 
-            formatter={(value: any) => [`$${value}`, "Estimated Cost"]}
+            formatter={(value: number | string | readonly (number | string)[] | undefined) => [`$${value || 0}`, "Estimated Cost"]}
             contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)', fontWeight: 'bold' }} 
           />
           <Legend wrapperStyle={{ paddingTop: '20px', fontWeight: 500, color: '#4B5563' }} />

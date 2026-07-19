@@ -47,3 +47,21 @@ export const useDeleteTrip = () => {
     },
   });
 };
+
+export const useAddActivityToTrip = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { tripId: string; day: number; activity: string; cost: number; time?: string }) => {
+      const { tripId, ...body } = data;
+      const res = await fetchApi(`/api/trips/${tripId}/itinerary`, { 
+        method: "POST", 
+        body: JSON.stringify(body) 
+      });
+      return res;
+    },
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({ queryKey: ["trips"] });
+      queryClient.invalidateQueries({ queryKey: ["trips", variables.tripId] });
+    },
+  });
+};

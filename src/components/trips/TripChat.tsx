@@ -12,13 +12,16 @@ interface Message {
   role: "user" | "assistant" | "system" | "tool";
   content: string;
   isStreaming?: boolean;
+  isError?: boolean;
 }
+
 
 export default function TripChat({ tripId }: TripChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [activeTool, setActiveTool] = useState<string | null>(null);
+  const [statusMessage, setStatusMessage] = useState<string | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -66,16 +69,21 @@ export default function TripChat({ tripId }: TripChatProps) {
     setMessages(prev => [...prev, { id: assistantMsgId, role: "assistant", content: "", isStreaming: true }]);
 
     try {
-      // Let's actually use the api client to get the token or just send cookies.
-      // Better-auth uses cookies by default (`better-auth.session_token`). We should include credentials: 'include'.
+      const tokenMatch = typeof document !== 'undefined' ? document.cookie.match(new RegExp('(^| )token=([^;]+)')) : null;
+      const token = tokenMatch ? tokenMatch[2] : null;
+
+      const headers: Record<string, string> = {
+        "Content-Type": "application/json",
+      };
+      
+      if (token) {
+        headers["Authorization"] = `Bearer ${token}`;
+      }
+
       const sseRes = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"}/api/agent/chat`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Adding authorization from localstorage if JWT was used, else cookies handle it.
-        },
+        headers,
         body: JSON.stringify({ tripId, message: text }),
-        credentials: "include" 
       });
 
       if (!sseRes.body) throw new Error("No response body");
@@ -109,8 +117,19 @@ export default function TripChat({ tripId }: TripChatProps) {
                   setActiveTool(`Running ${data.name}...`);
                 } else if (data.type === "tool_end") {
                   setActiveTool(null);
+                } else if (data.type === "status") {
+                  setStatusMessage(data.message);
                 } else if (data.type === "error") {
-                  console.error("Agent error:", data.error);
+                  setStatusMessage(null);
+                  setMessages(prev => prev
+                    .map(m => m.id === assistantMsgId ? { ...m, isStreaming: false } : m)
+                    .concat({
+                      id: crypto.randomUUID(),
+                      role: "assistant",
+                      content: `⚠️ ${data.error}`,
+                      isError: true,
+                    })
+                  );
                 }
               } catch {
                 // Ignore parse errors on incomplete chunks if any
@@ -123,11 +142,22 @@ export default function TripChat({ tripId }: TripChatProps) {
       setMessages(prev => prev.map(m => 
         m.id === assistantMsgId ? { ...m, isStreaming: false } : m
       ));
+      setStatusMessage(null);
     } catch (error) {
       console.error("Chat error:", error);
+      setMessages(prev => prev
+        .map(m => m.id === assistantMsgId ? { ...m, isStreaming: false } : m)
+        .concat({
+          id: crypto.randomUUID(),
+          role: "assistant",
+          content: "⚠️ Something went wrong. Please try again.",
+          isError: true,
+        })
+      );
     } finally {
       setIsLoading(false);
       setActiveTool(null);
+      setStatusMessage(null);
     }
   };
 
@@ -169,7 +199,11 @@ export default function TripChat({ tripId }: TripChatProps) {
               </div>
             )}
             <div className={`max-w-[80%] px-5 py-3.5 shadow-sm ${
-              msg.role === "user" ? "bg-gradient-to-r from-ocean-600 to-ocean-700 text-white rounded-2xl rounded-br-sm" : "bg-white text-gray-800 rounded-2xl rounded-bl-sm border border-gray-100"
+              msg.role === "user" 
+                ? "bg-gradient-to-r from-ocean-600 to-ocean-700 text-white rounded-2xl rounded-br-sm" 
+                : msg.isError
+                ? "bg-red-50 text-red-700 border border-red-200 rounded-2xl rounded-bl-sm"
+                : "bg-white text-gray-800 rounded-2xl rounded-bl-sm border border-gray-100"
             }`}>
               <div className="whitespace-pre-wrap text-[15px] leading-relaxed">{msg.content}</div>
               {msg.isStreaming && <span className="inline-block w-2 h-4 ml-1 bg-purple-500 animate-pulse rounded-full" />}
@@ -186,6 +220,13 @@ export default function TripChat({ tripId }: TripChatProps) {
           <div className="flex gap-3 items-center text-sm text-purple-600 font-medium animate-pulse">
             <Loader2 size={16} className="animate-spin" />
             {activeTool}
+          </div>
+        )}
+        
+        {statusMessage && (
+          <div className="flex gap-3 items-center text-sm text-amber-600 font-medium">
+            <Loader2 size={16} className="animate-spin" />
+            {statusMessage}
           </div>
         )}
         

@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  // Check if session cookie exists
-  // Better Auth uses 'better-auth.session_token' by default
-  const sessionCookie = request.cookies.get("better-auth.session_token");
+export default async function proxy(request: NextRequest) {
+  // We are now using standard JWT token instead of better auth
+  const sessionCookie = request.cookies.get("token");
   
   if (!sessionCookie) {
     const url = new URL("/login", request.url);

@@ -3,6 +3,10 @@
 import Link from "next/link";
 import { ArrowRight, MapPin, Compass, DollarSign, BrainCircuit, Star, Globe2, Sparkles, ChevronRight } from "lucide-react";
 import { motion, Variants } from "framer-motion";
+import { useItems } from "@/hooks/useItems";
+import { useSession } from "@/hooks/useSession";
+import ItemCard from "@/components/items/ItemCard";
+import ItemSkeleton from "@/components/items/ItemSkeleton";
 
 const fadeUp: Variants = {
   hidden: { opacity: 0, y: 30 },
@@ -20,6 +24,9 @@ const staggerContainer: Variants = {
 };
 
 export default function HomePage() {
+  const { data: trendingItems, isLoading } = useItems({ limit: 4 });
+  const { data: session } = useSession();
+
   return (
     <div className="flex flex-col min-h-screen bg-background">
       
@@ -72,10 +79,10 @@ export default function HomePage() {
             className="flex flex-col sm:flex-row gap-4 justify-center items-center"
           >
             <Link 
-              href="/register" 
+              href={session?.user ? "/dashboard" : "/register"} 
               className="group relative px-8 py-4 bg-white text-ocean-900 rounded-full font-bold text-lg overflow-hidden premium-shadow hover:premium-shadow-hover transition-all w-full sm:w-auto flex items-center justify-center gap-2"
             >
-              <span className="relative z-10">Start Planning</span>
+              <span className="relative z-10">{session?.user ? "Go to Dashboard" : "Start Planning"}</span>
               <ArrowRight size={20} className="relative z-10 group-hover:translate-x-1 transition-transform" />
               <div className="absolute inset-0 bg-gradient-to-r from-gray-100 to-white opacity-0 group-hover:opacity-100 transition-opacity" />
             </Link>
@@ -210,28 +217,19 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {/* Elegant Skeleton State until real data is fetched in a real app */}
-            {[1, 2, 3, 4].map((i) => (
-              <motion.div key={i} variants={fadeUp} className="bg-white rounded-3xl premium-shadow overflow-hidden border border-gray-100 flex flex-col group">
-                <div className="h-56 bg-gray-100 relative overflow-hidden">
-                  {/* Subtle shimmer effect */}
-                  <div className="absolute inset-0 -translate-x-full animate-[shimmer_1.5s_infinite] bg-gradient-to-r from-gray-100 via-white/60 to-gray-100" />
-                </div>
-                <div className="p-6 flex-grow flex flex-col gap-4">
-                  <div className="flex gap-2">
-                    <div className="h-5 bg-gray-100 rounded-full w-16" />
-                    <div className="h-5 bg-gray-100 rounded-full w-20" />
-                  </div>
-                  <div className="h-6 bg-gray-200 rounded-lg w-3/4" />
-                  <div className="h-4 bg-gray-100 rounded-lg w-full" />
-                  <div className="h-4 bg-gray-100 rounded-lg w-4/5" />
-                  <div className="mt-auto pt-4 flex justify-between items-center border-t border-gray-50">
-                    <div className="h-6 bg-gray-200 rounded-lg w-1/3" />
-                    <div className="h-8 w-8 bg-gray-100 rounded-full" />
-                  </div>
-                </div>
-              </motion.div>
-            ))}
+            {isLoading ? (
+              [1, 2, 3, 4].map((i) => (
+                <motion.div key={i} variants={fadeUp}>
+                  <ItemSkeleton />
+                </motion.div>
+              ))
+            ) : (
+              trendingItems?.items?.slice(0, 4).map((item: Record<string, unknown>) => (
+                <motion.div key={item._id as string} variants={fadeUp} className="h-full">
+                  <ItemCard item={item as unknown as { _id: string; title: string; region: string; images: string[]; avgRating: number; avgDailyCost: number; category: string; }} />
+                </motion.div>
+              ))
+            )}
           </motion.div>
         </div>
       </section>
@@ -256,7 +254,7 @@ export default function HomePage() {
             variants={staggerContainer}
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
           >
-            {['Europe', 'Asia', 'North America', 'South America'].map((region, i) => (
+            {['Europe', 'Asia', 'North America', 'South America'].map((region) => (
               <motion.div key={region} variants={fadeUp}>
                 <Link 
                   href={`/explore?region=${region}`} 
@@ -347,10 +345,10 @@ export default function HomePage() {
             Join thousands of travelers using TripCraft AI to build smarter, perfectly tailored itineraries in minutes.
           </p>
           <Link 
-            href="/register" 
+            href={session?.user ? "/dashboard" : "/register"} 
             className="inline-flex items-center gap-2 bg-white text-ocean-900 px-10 py-5 rounded-full font-bold text-lg hover:scale-105 transition-transform premium-shadow-hover"
           >
-            Start Your Journey <ChevronRight size={20} />
+            {session?.user ? "Go to Dashboard" : "Start Your Journey"} <ChevronRight size={20} />
           </Link>
         </motion.div>
       </section>

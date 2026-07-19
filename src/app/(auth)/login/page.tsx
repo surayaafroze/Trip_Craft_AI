@@ -4,11 +4,13 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Loader2, Mail, Lock, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
+
+const setAuthCookie = (token: string) => {
+  document.cookie = `token=${token}; path=/; max-age=604800; samesite=lax`;
+};
 
 const loginSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
@@ -18,7 +20,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -31,17 +32,22 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const { error: signInError } = await authClient.signIn.email({
-        email: data.email,
-        password: data.password,
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
       });
 
-      if (signInError) {
-        setError(signInError.message || "Invalid credentials");
+      const responseData = await res.json();
+      
+      if (!res.ok) {
+        setError(responseData.error || "Invalid credentials");
         return;
       }
       
-      router.push("/dashboard");
+      // Save token in cookie
+      setAuthCookie(responseData.token);
+      window.location.assign("/dashboard");
     } catch (err) {
       console.error(err);
       setError("An unexpected error occurred");
@@ -54,18 +60,20 @@ export default function LoginPage() {
     setIsLoading(true);
     setError(null);
     try {
-      // Assuming demo account exists on the server with these credentials
-      const { error: signInError } = await authClient.signIn.email({
-        email: "demo@tripcraft.ai",
-        password: "password123",
+      const res = await fetch("http://localhost:5000/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: "demo@tripcraft.ai", password: "password123" }),
       });
 
-      if (signInError) {
+      const responseData = await res.json();
+      
+      if (!res.ok) {
         setError("Demo login failed. Please ensure the demo user is seeded.");
         return;
       }
-      
-      router.push("/dashboard");
+      setAuthCookie(responseData.token);
+      window.location.assign("/dashboard");
     } catch (err) {
       console.error(err);
       setError("An unexpected error occurred");
@@ -74,19 +82,13 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleLogin = () => {
     setIsGoogleLoading(true);
-    setError(null);
-    try {
-      await authClient.signIn.social({
-        provider: "google",
-        callbackURL: "/dashboard"
-      });
-    } catch (err) {
-      console.error(err);
-      setError("An unexpected error occurred with Google Login");
-      setIsGoogleLoading(false);
-    }
+    const clientId = "573237437483-bqm522qfcjg9jcd6rta8cg95bglv1v15.apps.googleusercontent.com";
+    const redirectUri = "http://localhost:3000/api/auth/callback/google";
+    const scope = encodeURIComponent("email profile");
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
+    window.location.href = authUrl;
   };
 
   return (

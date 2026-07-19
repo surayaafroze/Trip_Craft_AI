@@ -3,7 +3,7 @@
 import { useRecommendations } from "@/hooks/useRecommendations";
 import ItemCard from "@/components/items/ItemCard";
 import { Sparkles, Loader2 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { useSession } from "@/hooks/useSession";
 
 interface RecommendationsSectionProps {
   filters: {
@@ -14,7 +14,7 @@ interface RecommendationsSectionProps {
 }
 
 export default function RecommendationsSection({ filters }: RecommendationsSectionProps) {
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   
   const { data: recommendations, isLoading, isError } = useRecommendations({
     region: filters.region,

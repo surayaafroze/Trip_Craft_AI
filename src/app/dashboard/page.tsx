@@ -1,12 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-import { MapPin, PlusCircle, Compass, CalendarDays, ArrowRight } from "lucide-react";
+import { useSession } from "@/hooks/useSession";
+import { MapPin, PlusCircle, Compass, ArrowRight } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function DashboardPage() {
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
 
   return (
     <div className="bg-background min-h-screen pt-12 pb-24">
@@ -18,7 +18,7 @@ export default function DashboardPage() {
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
           <div>
             <h1 className="text-4xl font-extrabold text-foreground mb-2 tracking-tight">Dashboard</h1>
-            <p className="text-gray-500 text-lg">Welcome back, {session?.user?.name || "Traveler"}! Let's plan your next adventure.</p>
+            <p className="text-gray-500 text-lg">Welcome back, {session?.user?.name || "Traveler"}! Let&apos;s plan your next adventure.</p>
           </div>
           <Link href="/dashboard/trips" className="bg-ocean-600 text-white px-6 py-3 rounded-full font-bold premium-shadow hover:premium-shadow-hover hover:-translate-y-0.5 transition-all flex items-center gap-2 self-start md:self-auto">
             <PlusCircle size={18} /> Plan New Trip

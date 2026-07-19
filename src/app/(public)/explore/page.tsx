@@ -59,7 +59,7 @@ export default function ExplorePage() {
               </svg>
             </div>
             <h3 className="text-2xl font-bold text-foreground mb-3">No destinations found</h3>
-            <p className="text-gray-500 max-w-md mb-8">We couldn't find any destinations matching your current filters. Try adjusting your search criteria.</p>
+            <p className="text-gray-500 max-w-md mb-8">We couldn&apos;t find any destinations matching your current filters. Try adjusting your search criteria.</p>
             <button 
               onClick={() => {
                 setFilters({ search: "", region: "", minPrice: "", maxPrice: "", sort: "newest" });

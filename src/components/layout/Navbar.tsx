@@ -1,19 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { authClient } from "@/lib/auth-client";
-import { LogOut, Compass, User, LayoutDashboard, Map } from "lucide-react";
+import { useSession } from "@/hooks/useSession";
+import { LogOut, Compass, User } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 
 export default function Navbar() {
-  const { data: session } = authClient.useSession();
+  const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
 
   const handleLogout = async () => {
-    await authClient.signOut();
-    router.push("/login");
+    // manual sign out for JWT
+    document.cookie = "token=; path=/; max-age=0;";
+    router.push("/");
+    setTimeout(() => window.location.reload(), 100); // hard reload to clear cache
   };
 
   const navLinks = [

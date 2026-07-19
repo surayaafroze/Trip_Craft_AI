@@ -1,18 +1,29 @@
 "use client";
 
 import { useItem, useRelatedItems } from "@/hooks/useItems";
-import { useParams } from "next/navigation";
-import { MapPin, DollarSign, Calendar, Tag, Star, ArrowLeft, Share2, Heart } from "lucide-react";
+import { MapPin, Tag, Star, ArrowLeft, Share2, Heart } from "lucide-react";
 import ReviewSection from "@/components/items/ReviewSection";
 import ItemCard from "@/components/items/ItemCard";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { use } from "react";
+import { use, useState } from "react";
+import AddToTripModal from "@/components/trips/AddToTripModal";
+import { useSession } from "@/hooks/useSession";
 
 export default function ItemDetailsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const { data: item, isLoading, isError } = useItem(id);
   const { data: relatedItems } = useRelatedItems(id);
+  const { data: session } = useSession();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleAddToTrip = () => {
+    if (!session?.user) {
+      window.location.href = "/login";
+      return;
+    }
+    setIsModalOpen(true);
+  };
 
   if (isLoading) return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -75,23 +86,23 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
         <div className="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 mb-16 h-[50vh] md:h-[65vh] rounded-3xl overflow-hidden premium-shadow group">
           <div className="md:col-span-2 md:row-span-2 relative overflow-hidden h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.images?.[0] || "https://placehold.co/800x600?text=No+Image"} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
+            <img src={item.images?.[0] || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80"} alt={item.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" />
           </div>
           <div className="hidden md:block relative overflow-hidden h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.images?.[1] || "https://placehold.co/600x400?text=Placeholder"} alt={`${item.title} 2`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
+            <img src={item.images?.[1] || "https://images.unsplash.com/photo-1506929562872-bb421503ef21?auto=format&fit=crop&q=80"} alt={`${item.title} 2`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
           </div>
           <div className="hidden md:block relative overflow-hidden h-full rounded-tr-3xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.images?.[2] || "https://placehold.co/600x400?text=Placeholder"} alt={`${item.title} 3`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
+            <img src={item.images?.[2] || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80"} alt={`${item.title} 3`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
           </div>
           <div className="hidden md:block relative overflow-hidden h-full">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.images?.[3] || "https://placehold.co/600x400?text=Placeholder"} alt={`${item.title} 4`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
+            <img src={item.images?.[3] || "https://images.unsplash.com/photo-1454391304352-2bf4678b1a7a?auto=format&fit=crop&q=80"} alt={`${item.title} 4`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
           </div>
           <div className="hidden md:block relative overflow-hidden h-full rounded-br-3xl">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={item.images?.[4] || "https://placehold.co/600x400?text=Placeholder"} alt={`${item.title} 5`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
+            <img src={item.images?.[4] || "https://images.unsplash.com/photo-1527668752968-14ce70a4a7ae?auto=format&fit=crop&q=80"} alt={`${item.title} 5`} className="w-full h-full object-cover hover:scale-110 transition-transform duration-700 ease-out cursor-pointer" />
           </div>
         </div>
 
@@ -133,7 +144,9 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
                 </div>
               </div>
 
-              <button className="w-full bg-gradient-to-r from-ocean-600 to-ocean-800 text-white font-bold text-lg py-4 rounded-full premium-shadow hover:premium-shadow-hover hover:-translate-y-0.5 transition-all mb-6">
+              <button 
+                onClick={handleAddToTrip}
+                className="w-full bg-gradient-to-r from-ocean-600 to-ocean-800 text-white font-bold text-lg py-4 rounded-full premium-shadow hover:premium-shadow-hover hover:-translate-y-0.5 transition-all mb-6">
                 Add to Trip Planner
               </button>
 
@@ -173,6 +186,14 @@ export default function ItemDetailsPage({ params }: { params: Promise<{ id: stri
           </section>
         )}
       </motion.div>
+      
+      {item && (
+        <AddToTripModal 
+          isOpen={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          item={{ title: item.title, avgDailyCost: item.avgDailyCost, region: item.region }} 
+        />
+      )}
     </div>
   );
 }

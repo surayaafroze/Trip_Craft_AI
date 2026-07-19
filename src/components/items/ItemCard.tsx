@@ -10,6 +10,7 @@ interface ItemCardProps {
     avgRating: number;
     avgDailyCost: number;
     category: string;
+    shortDescription?: string;
   };
 }
 
@@ -17,8 +18,9 @@ export default function ItemCard({ item }: ItemCardProps) {
   return (
     <Link href={`/items/${item._id}`} className="group flex flex-col bg-white rounded-3xl overflow-hidden premium-shadow hover:premium-shadow-hover transition-all duration-300 hover:-translate-y-1">
       <div className="relative h-64 bg-gray-100 overflow-hidden">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
         <img 
-          src={item.images?.[0] || "https://placehold.co/600x400?text=No+Image"} 
+          src={item.images?.[0] || "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80"} 
           alt={item.title} 
           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 ease-out"
         />
@@ -34,9 +36,15 @@ export default function ItemCard({ item }: ItemCardProps) {
       </div>
       
       <div className="p-6 flex flex-col flex-grow">
-        <div className="flex items-start justify-between gap-2 mb-3">
+        <div className="flex items-start justify-between gap-2 mb-2">
           <h3 className="font-bold text-xl text-foreground line-clamp-1 tracking-tight group-hover:text-ocean-600 transition-colors">{item.title}</h3>
         </div>
+        
+        {item.shortDescription && (
+          <p className="text-sm text-gray-500 line-clamp-2 mb-3 leading-relaxed">
+            {item.shortDescription}
+          </p>
+        )}
         
         <div className="flex items-center text-gray-500 text-sm mb-6 font-medium">
           <MapPin size={16} className="mr-1.5 text-teal-600" />
