@@ -33,7 +33,7 @@ export default function RegisterPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await fetch("http://localhost:5000/api/auth/register", {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000"}/api/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ name: data.name, email: data.email, password: data.password }),
@@ -58,7 +58,7 @@ export default function RegisterPage() {
   const handleGoogleSignUp = () => {
     setIsGoogleLoading(true);
     const clientId = "573237437483-bqm522qfcjg9jcd6rta8cg95bglv1v15.apps.googleusercontent.com";
-    const redirectUri = "http://localhost:3000/api/auth/callback/google";
+    const redirectUri = `${process.env.NEXT_PUBLIC_CLIENT_URL || "http://localhost:3000"}/api/auth/callback/google`;
     const scope = encodeURIComponent("email profile");
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=${scope}&access_type=offline&prompt=consent`;
     window.location.href = authUrl;
