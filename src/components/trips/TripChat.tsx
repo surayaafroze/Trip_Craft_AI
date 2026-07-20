@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { Send, Loader2, Bot, User, BrainCircuit } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TripChatProps {
   tripId: string;
@@ -22,6 +23,7 @@ export default function TripChat({ tripId }: TripChatProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTool, setActiveTool] = useState<string | null>(null);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const queryClient = useQueryClient();
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
@@ -117,6 +119,7 @@ export default function TripChat({ tripId }: TripChatProps) {
                   setActiveTool(`Running ${data.name}...`);
                 } else if (data.type === "tool_end") {
                   setActiveTool(null);
+                  queryClient.invalidateQueries({ queryKey: ["trips", tripId] });
                 } else if (data.type === "status") {
                   setStatusMessage(data.message);
                 } else if (data.type === "error") {
