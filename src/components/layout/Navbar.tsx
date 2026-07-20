@@ -1,15 +1,17 @@
 "use client";
 
+import React, { useState } from "react";
 import Link from "next/link";
 import { useSession } from "@/hooks/useSession";
-import { LogOut, Compass, User } from "lucide-react";
+import { LogOut, Compass, User, Menu, X } from "lucide-react";
 import { useRouter, usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function Navbar() {
   const { data: session } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = async () => {
     // manual sign out for JWT
@@ -48,6 +50,7 @@ export default function Navbar() {
             </span>
           </Link>
           
+          {/* Desktop Nav Links */}
           <div className="hidden md:flex items-center gap-1">
             {navLinks.map((link) => (
               <Link 
@@ -69,39 +72,123 @@ export default function Navbar() {
         </div>
         
         <div className="flex items-center gap-4">
-          {session ? (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full premium-shadow border border-gray-100">
-                <div className="w-7 h-7 bg-ocean-100 text-ocean-700 rounded-full flex items-center justify-center">
-                  <User size={14} />
+          <div className="hidden md:flex items-center gap-4">
+            {session ? (
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full premium-shadow border border-gray-100">
+                  <div className="w-7 h-7 bg-ocean-100 text-ocean-700 rounded-full flex items-center justify-center">
+                    <User size={14} />
+                  </div>
+                  <span className="text-sm font-semibold text-gray-700">
+                    {session.user.name?.split(' ')[0] || "User"}
+                  </span>
                 </div>
-                <span className="text-sm font-semibold text-gray-700 hidden sm:block">
-                  {session.user.name?.split(' ')[0] || "User"}
-                </span>
+                <button
+                  onClick={handleLogout}
+                  className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
+                  title="Logout"
+                >
+                  <LogOut size={18} />
+                </button>
               </div>
-              <button
-                onClick={handleLogout}
-                className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-full transition-colors"
-                title="Logout"
-              >
-                <LogOut size={18} />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-center gap-3">
-              <Link href="/login" className="px-5 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">
-                Log in
-              </Link>
-              <Link
-                href="/register"
-                className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-ocean-600 to-ocean-800 rounded-full premium-shadow hover:premium-shadow-hover hover:-translate-y-0.5 transition-all"
-              >
-                Sign up
-              </Link>
-            </div>
-          )}
+            ) : (
+              <div className="flex items-center gap-3">
+                <Link href="/login" className="px-5 py-2 text-sm font-semibold text-gray-600 hover:text-gray-900 transition-colors">
+                  Log in
+                </Link>
+                <Link
+                  href="/register"
+                  className="px-6 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-ocean-600 to-ocean-800 rounded-full premium-shadow hover:premium-shadow-hover hover:-translate-y-0.5 transition-all"
+                >
+                  Sign up
+                </Link>
+              </div>
+            )}
+          </div>
+
+          {/* Mobile Menu Toggle */}
+          <div className="md:hidden flex items-center">
+            <button
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors"
+              aria-label="Toggle menu"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+          </div>
         </div>
       </div>
+
+      {/* Mobile Nav Menu */}
+      <AnimatePresence>
+        {isMobileMenuOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="md:hidden overflow-hidden bg-white border-b border-gray-100 shadow-lg"
+          >
+            <div className="px-4 py-4 space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className={`block px-4 py-3 text-base font-medium rounded-xl transition-colors ${
+                    pathname === link.href
+                      ? "bg-ocean-50 text-ocean-700"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  }`}
+                >
+                  {link.name}
+                </Link>
+              ))}
+              
+              <div className="pt-4 mt-2 border-t border-gray-100">
+                {session ? (
+                  <div className="flex items-center justify-between px-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-ocean-100 text-ocean-700 rounded-full flex items-center justify-center">
+                        <User size={18} />
+                      </div>
+                      <span className="font-semibold text-gray-700">
+                        {session.user.name || "User"}
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setIsMobileMenuOpen(false);
+                        handleLogout();
+                      }}
+                      className="flex items-center gap-2 px-4 py-2 text-sm font-semibold text-red-600 bg-red-50 rounded-full hover:bg-red-100 transition-colors"
+                    >
+                      <LogOut size={16} /> Logout
+                    </button>
+                  </div>
+                ) : (
+                  <div className="flex flex-col gap-3 px-2">
+                    <Link
+                      href="/login"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full py-3 text-center text-sm font-semibold text-gray-700 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+                    >
+                      Log in
+                    </Link>
+                    <Link
+                      href="/register"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                      className="w-full py-3 text-center text-sm font-semibold text-white bg-gradient-to-r from-ocean-600 to-ocean-800 rounded-xl premium-shadow transition-colors"
+                    >
+                      Sign up
+                    </Link>
+                  </div>
+                )}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.nav>
   );
 }
